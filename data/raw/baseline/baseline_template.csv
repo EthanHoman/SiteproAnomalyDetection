@@ -1,0 +1,2 @@
+Well ID,pump_type,horsepower,application,baseline_flow_gpm,baseline_discharge_pressure_psi,baseline_power_hp,baseline_efficiency_percent
+Well 1,Goulds 3409,100,Municipal Water and Wastewater,500,150,75,85.5

@@ -1,0 +1,6 @@
+timestamp,Well ID,Flow (gpm),Discharge Pressure (psi),Suction Pressure (psi),Motor Power (hp),Pump Efficiency (%),Motor Speed (rpm)
+5/1/2024 0:00,Well 1,505,148,25,76,85.2,1760
+5/1/2024 1:00,Well 1,510,152,26,77,84.8,1765
+5/1/2024 2:00,Well 1,498,147,24,75.5,85.3,1758
+5/1/2024 3:00,Well 1,502,149,25,75.8,85.1,1762
+5/1/2024 4:00,Well 1,507,151,26,76.2,84.9,1764

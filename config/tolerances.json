@@ -1,0 +1,255 @@
+{
+  "description": "Industry-standard tolerance specifications for pump performance monitoring",
+  "categories": {
+    "1B": {
+      "name": "API - All Horsepower",
+      "application": "API",
+      "tolerances": {
+        "flow": {
+          "mandatory": true,
+          "max_deviation": 5,
+          "min_deviation": -5,
+          "bidirectional": true,
+          "note": "+/- 5% deviation allowed"
+        },
+        "head": {
+          "mandatory": true,
+          "max_deviation": 3,
+          "min_deviation": -3,
+          "bidirectional": true,
+          "note": "+/- 3% deviation allowed"
+        },
+        "power": {
+          "mandatory": false,
+          "max_deviation": 4,
+          "min_deviation": -999,
+          "bidirectional": false,
+          "note": "+4% positive deviation only"
+        },
+        "efficiency": {
+          "mandatory": false,
+          "max_deviation": 999,
+          "min_deviation": -3,
+          "bidirectional": false,
+          "note": "-3% negative deviation only"
+        }
+      }
+    },
+    "1E": {
+      "name": "Energy Conservation - All Horsepower",
+      "application": "Energy Conservation",
+      "tolerances": {
+        "flow": {
+          "mandatory": true,
+          "max_deviation": 5,
+          "min_deviation": -5,
+          "bidirectional": true,
+          "note": "+/- 5% deviation allowed"
+        },
+        "head": {
+          "mandatory": true,
+          "max_deviation": 3,
+          "min_deviation": -3,
+          "bidirectional": true,
+          "note": "+/- 3% deviation allowed"
+        },
+        "power": {
+          "mandatory": false,
+          "max_deviation": 4,
+          "min_deviation": -999,
+          "bidirectional": false,
+          "note": "+4% positive deviation only"
+        },
+        "efficiency": {
+          "mandatory": false,
+          "max_deviation": 999,
+          "min_deviation": 0,
+          "bidirectional": false,
+          "note": "-0% (no negative deviation allowed)"
+        }
+      }
+    },
+    "1U": {
+      "name": "Municipal Water and Wastewater - All Horsepower",
+      "application": "Municipal Water and Wastewater",
+      "tolerances": {
+        "flow": {
+          "mandatory": true,
+          "max_deviation": 10,
+          "min_deviation": -999,
+          "bidirectional": false,
+          "note": "+10% positive deviation only"
+        },
+        "head": {
+          "mandatory": true,
+          "max_deviation": 6,
+          "min_deviation": -999,
+          "bidirectional": false,
+          "note": "+6% positive deviation only"
+        },
+        "power": {
+          "mandatory": false,
+          "max_deviation": 10,
+          "min_deviation": -999,
+          "bidirectional": false,
+          "note": "+10% positive deviation only"
+        },
+        "efficiency": {
+          "mandatory": false,
+          "max_deviation": 999,
+          "min_deviation": 0,
+          "bidirectional": false,
+          "note": "-0% (no negative deviation allowed)"
+        }
+      }
+    },
+    "2B": {
+      "name": "General Industry / Cooling Tower - HP >= 134",
+      "application": "General Industry, Cooling Tower",
+      "tolerances": {
+        "flow": {
+          "mandatory": true,
+          "max_deviation": 8,
+          "min_deviation": -8,
+          "bidirectional": true,
+          "note": "+/- 8% deviation allowed"
+        },
+        "head": {
+          "mandatory": true,
+          "max_deviation": 5,
+          "min_deviation": -5,
+          "bidirectional": true,
+          "note": "+/- 5% deviation allowed"
+        },
+        "power": {
+          "mandatory": false,
+          "max_deviation": 8,
+          "min_deviation": -999,
+          "bidirectional": false,
+          "note": "+8% positive deviation only"
+        },
+        "efficiency": {
+          "mandatory": false,
+          "max_deviation": 999,
+          "min_deviation": -5,
+          "bidirectional": false,
+          "note": "-5% negative deviation only"
+        }
+      }
+    },
+    "2U": {
+      "name": "Municipal Water and Wastewater (Alternate)",
+      "application": "Municipal Water and Wastewater (Alternate)",
+      "tolerances": {
+        "flow": {
+          "mandatory": true,
+          "max_deviation": 16,
+          "min_deviation": -999,
+          "bidirectional": false,
+          "note": "+16% positive deviation only"
+        },
+        "head": {
+          "mandatory": true,
+          "max_deviation": 10,
+          "min_deviation": -999,
+          "bidirectional": false,
+          "note": "+10% positive deviation only"
+        },
+        "power": {
+          "mandatory": false,
+          "max_deviation": 16,
+          "min_deviation": -999,
+          "bidirectional": false,
+          "note": "+16% positive deviation only"
+        },
+        "efficiency": {
+          "mandatory": false,
+          "max_deviation": 999,
+          "min_deviation": -5,
+          "bidirectional": false,
+          "note": "-5% negative deviation only"
+        }
+      }
+    },
+    "3B": {
+      "name": "General Industry / Dewatering - HP < 134",
+      "application": "General Industry, Dewatering, drainage, and irrigation",
+      "tolerances": {
+        "flow": {
+          "mandatory": true,
+          "max_deviation": 9,
+          "min_deviation": -9,
+          "bidirectional": true,
+          "note": "+/- 9% deviation allowed"
+        },
+        "head": {
+          "mandatory": true,
+          "max_deviation": 7,
+          "min_deviation": -7,
+          "bidirectional": true,
+          "note": "+/- 7% deviation allowed"
+        },
+        "power": {
+          "mandatory": false,
+          "max_deviation": 9,
+          "min_deviation": -999,
+          "bidirectional": false,
+          "note": "+9% positive deviation only"
+        },
+        "efficiency": {
+          "mandatory": false,
+          "max_deviation": 999,
+          "min_deviation": -7,
+          "bidirectional": false,
+          "note": "-7% negative deviation only"
+        }
+      }
+    }
+  },
+  "application_mapping": {
+    "Municipal Water and Wastewater": "1U",
+    "API": "1B",
+    "Energy Conservation": "1E",
+    "Cooling Tower": "2B",
+    "General Industry": {
+      "hp_less_than_134": "3B",
+      "hp_greater_equal_134": "2B"
+    },
+    "Dewatering, drainage, and irrigation": {
+      "hp_less_than_134": "3B",
+      "hp_greater_equal_134": "2B"
+    }
+  },
+  "parameter_definitions": {
+    "flow": {
+      "description": "Flow rate in gallons per minute (GPM)",
+      "column_name": "Flow (gpm)",
+      "baseline_key": "baseline_flow_gpm"
+    },
+    "head": {
+      "description": "Discharge pressure in PSI (NOT suction pressure)",
+      "column_name": "Discharge Pressure (psi)",
+      "baseline_key": "baseline_discharge_pressure_psi"
+    },
+    "power": {
+      "description": "Motor power consumption in horsepower (HP)",
+      "column_name": "Motor Power (hp)",
+      "baseline_key": "baseline_power_hp"
+    },
+    "efficiency": {
+      "description": "Pump efficiency as percentage",
+      "column_name": "Pump Efficiency (%)",
+      "baseline_key": "baseline_efficiency_percent"
+    }
+  },
+  "notes": {
+    "deviation_calculation": "Deviation % = ((current - baseline) / baseline) * 100",
+    "efficiency_tolerance": "Efficiency tolerance is percentage OF baseline, not percentage points",
+    "mandatory_vs_optional": "Flow and Head are mandatory parameters; Power and Efficiency are optional",
+    "directional_tolerances": {
+      "bidirectional": "Check both positive and negative deviations (e.g., +/- 5%)",
+      "positive_only": "Only check if value exceeds baseline by threshold (e.g., +10%)",
+      "negative_only": "Only check if value drops below baseline by threshold (e.g., -3%)"
+    }
+  }
+}

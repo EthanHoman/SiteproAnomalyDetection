@@ -1,0 +1,12 @@
+Model Type: random_forest
+Training Date: 2025-11-18 11:25:37
+
+Train Metrics:
+  MAE: 0.0030
+  RMSE: 0.0063
+  R²: 1.0000
+
+Test Metrics:
+  MAE: 2.8806
+  RMSE: 3.2002
+  R²: -4.6592
