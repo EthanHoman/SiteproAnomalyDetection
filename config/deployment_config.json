@@ -1,0 +1,29 @@
+{
+  "api": {
+    "base_url": "https://sp-api-sink.azurewebsites.net/api/v1",
+    "bearer_token": "YOUR_EDGE_AI_API_TOKEN_HERE",
+    "retry_attempts": 3,
+    "retry_delay_seconds": 5
+  },
+  "site_info": {
+    "site_id": 35482,
+    "pump_id": 1,
+    "sensor_ids": {
+      "flow": 101,
+      "head": 102,
+      "power": 103,
+      "efficiency": 104
+    }
+  },
+  "anomaly_reporting": {
+    "enabled": true,
+    "report_on_status": ["Warning", "Critical", "Failure"],
+    "debounce_minutes": 60,
+    "include_ml_predictions": true
+  },
+  "inference_settings": {
+    "min_data_points_for_ml": 168,
+    "save_results_locally": true,
+    "results_retention_days": 30
+  }
+}

@@ -1,10 +1,14 @@
-# Pump Anomaly Detection System - Phase 1
+# Pump Anomaly Detection System
 
 ## Overview
 
-A comprehensive pump anomaly detection system that processes sensor data, applies industry-standard tolerance thresholds, trains predictive models, and generates detailed failure analysis reports.
+A comprehensive pump anomaly detection system that processes sensor data, applies industry-standard tolerance thresholds, trains predictive models, and generates detailed failure analysis reports. Now with edge deployment and centralized anomaly reporting capabilities.
 
-**Phase 1 Focus:** Core functionality for data processing, tolerance-based anomaly detection, visualization, and ML-powered failure prediction.
+**Phase 1:** Core functionality for data processing, tolerance-based anomaly detection, visualization, and ML-powered failure prediction. ✅
+
+**Phase 2B:** Edge deployment artifacts and API integration for centralized anomaly reporting. ✅
+
+**See [PHASE2B_README.md](PHASE2B_README.md) for edge deployment documentation.**
 
 ## Installation
 
