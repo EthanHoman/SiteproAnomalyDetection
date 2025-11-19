@@ -1,0 +1,405 @@
+@startuml System_Class_Diagram
+
+' ============================================================================
+' SIMPLIFIED CLASS DIAGRAM - COMPLETE SYSTEM
+' ============================================================================
+
+package "Core Analysis System" {
+  class PumpMonitor {
+    - baseline: dict
+    - tolerances: dict
+    - operational_df: DataFrame
+    - model: RandomForestRegressor
+
+    + load_operational_data(filepath)
+    + analyze()
+    + generate_report()
+    + get_current_status()
+  }
+
+  class DataProcessor {
+    + load_baseline_data(filepath): dict
+    + load_operational_data(filepath): DataFrame
+    + calculate_deviations(df, baseline): DataFrame
+    + validate_data(df)
+  }
+
+  class ToleranceChecker {
+    - tolerances: dict
+
+    + select_tolerance_category(app, hp): str
+    + check_tolerances(deviations): dict
+    + classify_status(violations): str
+  }
+
+  class PredictiveModel {
+    - model: RandomForestRegressor
+    - scaler: StandardScaler
+
+    + engineer_features(df): DataFrame
+    + train_failure_predictor(X, y): model
+    + predict_failure(data): dict
+  }
+
+  class Visualizer {
+    + plot_dashboard(df)
+    + plot_timeline(events)
+    + plot_trends(df)
+  }
+}
+
+package "Edge Deployment System" {
+  class EdgeInference {
+    - model: object
+    - baseline: dict
+    - tolerances: dict
+    - api_client: AnomalyAPIClient
+    - last_reported: dict
+
+    + run_inference(input_csv, output_json)
+    + calculate_deviations(row): dict
+    + check_tolerances(deviations): dict
+    + format_anomaly_payload(results): dict
+    + should_report_anomaly(): bool
+  }
+
+  class AnomalyAPIClient {
+    - base_url: str
+    - bearer_token: str
+
+    + submit_anomaly(payload): dict
+    + query_anomalies(filters): dict
+  }
+
+  class ArtifactPackager {
+    - pump_name: str
+    - version: str
+
+    + load_baseline(file)
+    + package(output_path)
+  }
+}
+
+package "Data Models" {
+  class BaselineData {
+    + well_id: str
+    + baseline_flow_gpm: float
+    + baseline_discharge_pressure_psi: float
+    + baseline_power_hp: float
+    + baseline_efficiency_percent: float
+  }
+
+  class AnomalyPayload {
+    + sourceType: str
+    + description: str
+    + siteId: int
+    + pumpId: int
+    + timestamp: str
+    + additionalContext: dict
+    + metadata: dict
+  }
+}
+
+' Relationships
+PumpMonitor --> DataProcessor : uses
+PumpMonitor --> ToleranceChecker : uses
+PumpMonitor --> PredictiveModel : uses
+PumpMonitor --> Visualizer : uses
+PumpMonitor ..> BaselineData : processes
+
+EdgeInference --> AnomalyAPIClient : uses
+EdgeInference ..> AnomalyPayload : creates
+
+ArtifactPackager ..> PredictiveModel : packages
+ArtifactPackager --> EdgeInference : creates artifact for
+
+note right of PumpMonitor
+  Main orchestrator for
+  training and analysis
+
+  Phase 1: Core System
+end note
+
+note right of EdgeInference
+  Runs on edge device
+  (Raspberry Pi)
+
+  Phase 2B: Edge Deployment
+end note
+
+note bottom of AnomalyPayload
+  JSON payload sent to API:
+  {
+    "sourceType": "log",
+    "description": "Flow exceeded 15%",
+    "siteId": 35482,
+    "pumpId": 1,
+    "additionalContext": {...},
+    "metadata": {...}
+  }
+end note
+
+@enduml
+
+' ============================================================================
+' ============================================================================
+
+@startuml System_UseCase_Diagram
+
+' ============================================================================
+' SIMPLIFIED USE CASE DIAGRAM - COMPLETE SYSTEM
+' ============================================================================
+
+left to right direction
+
+actor "Data Analyst" as analyst
+actor "DevOps Engineer" as devops
+actor "Edge Device" as edge
+actor "Central API" as api
+
+rectangle "Pump Anomaly Detection System" {
+
+  package "Phase 1: Training & Analysis" {
+    usecase "UC1: Load Pump Data" as UC1
+    usecase "UC2: Calculate Deviations" as UC2
+    usecase "UC3: Check Tolerances" as UC3
+    usecase "UC4: Train ML Model" as UC4
+    usecase "UC5: Generate Report" as UC5
+  }
+
+  package "Phase 2B: Edge Deployment" {
+    usecase "UC6: Package Artifact" as UC6
+    usecase "UC7: Deploy to Edge" as UC7
+    usecase "UC8: Run Inference" as UC8
+    usecase "UC9: Detect Anomaly" as UC9
+    usecase "UC10: Send JSON to API" as UC10
+  }
+}
+
+' Analyst workflows
+analyst --> UC1
+analyst --> UC2
+analyst --> UC3
+analyst --> UC5
+
+' DevOps workflows
+devops --> UC4
+devops --> UC6
+devops --> UC7
+
+' Edge device workflows
+edge --> UC8
+edge --> UC9
+
+' API interactions
+UC10 ..> api : POST JSON payload
+
+' Workflow dependencies
+UC2 .> UC1 : <<include>>
+UC3 .> UC2 : <<include>>
+UC5 .> UC3 : <<include>>
+UC5 .> UC4 : <<extend>>
+
+UC7 .> UC6 : <<include>>
+UC8 .> UC7 : <<requires>>
+UC9 .> UC8 : <<part of>>
+UC10 .> UC9 : <<triggered by>>
+
+note right of UC1
+  Loads baseline and
+  operational sensor data
+  - Flow (gpm)
+  - Discharge Pressure (psi)
+  - Motor Power (hp)
+  - Pump Efficiency (%)
+end note
+
+note right of UC3
+  Applies tolerance category 1U:
+  - Flow: +10%
+  - Head: +6%
+  - Power: +10%
+  - Efficiency: -0%
+end note
+
+note right of UC10
+  Sends JSON payload to:
+  POST /edge/anomalies
+
+  Contains:
+  - All deviations
+  - Current status
+  - ML predictions
+  - Baseline values
+end note
+
+@enduml
+
+' ============================================================================
+' ============================================================================
+
+@startuml System_Sequence_Diagram
+
+' ============================================================================
+' SIMPLIFIED SEQUENCE DIAGRAM - EDGE INFERENCE TO API
+' ============================================================================
+
+participant "Cron Job\n(Hourly)" as cron
+participant "EdgeInference" as inference
+participant "Sensor Data\n(CSV)" as sensor
+participant "ML Model" as model
+participant "AnomalyAPIClient" as client
+participant "Central API\n(Azure)" as api
+database "Results\n(JSON)" as results
+
+== Initialization (on startup) ==
+cron -> inference: EdgeInference(".")
+inference -> inference: load_model()
+inference -> inference: load_baseline()
+inference -> inference: load_tolerances()
+inference -> client: new AnomalyAPIClient(base_url, token)
+client --> inference: ready
+
+== Hourly Inference ==
+cron -> inference: run_inference("sensor_data.csv", "results.json")
+
+group Read Sensor Data
+  inference -> sensor: read CSV
+  sensor --> inference: DataFrame[3 rows]
+  note right
+    timestamp, Flow (gpm),
+    Discharge Pressure (psi),
+    Motor Power (hp),
+    Pump Efficiency (%)
+  end note
+  inference -> inference: select latest row
+end
+
+group Calculate Deviations
+  loop for each parameter
+    inference -> inference: deviation = ((current - baseline) / baseline) × 100
+  end
+  inference --> inference: deviations = {flow: 15.0, head: 10.0, power: 8.5, efficiency: -1.2}
+end
+
+group Check Tolerances
+  loop for each parameter
+    inference -> inference: check if deviation > max_threshold
+    inference -> inference: check if deviation < min_threshold
+  end
+
+  alt Flow or Head exceeded (mandatory params)
+    inference -> inference: status = "Warning"
+    inference -> inference: violations = {flow: {...}, head: {...}}
+  else Multiple violations or severe
+    inference -> inference: status = "Critical" or "Failure"
+  else No violations
+    inference -> inference: status = "Normal"
+  end
+end
+
+group ML Prediction
+  alt DataFrame has >= 168 rows
+    inference -> inference: extract_features(df)
+    inference -> model: predict(features)
+    model --> inference: rul_days = 12.5
+    inference -> inference: probability = 0.85, confidence = 0.87
+  else Not enough data
+    inference --> inference: prediction = None
+  end
+end
+
+group Determine If Reporting Needed
+  alt status == "Normal"
+    inference -> inference: should_report = False
+  else recently reported (< 60 min)
+    inference -> inference: should_report = False (debounced)
+  else mandatory exceeded OR critical status OR ML predicts failure
+    inference -> inference: should_report = True
+  end
+end
+
+group Send JSON Payload to API
+  alt should_report == True
+    inference -> inference: format_anomaly_payload()
+    note right of inference
+      JSON Payload:
+      {
+        "sourceType": "log",
+        "description": "Flow exceeded 15.0% (threshold: 10.0%)",
+        "siteId": 35482,
+        "pumpId": 1,
+        "sensorId": 101,
+        "timestamp": "2024-11-19T14:32:00Z",
+        "logValue": 575.0,
+        "additionalContext": {
+          "status": "Warning",
+          "tolerance_category": "1U",
+          "all_deviations": {
+            "flow": 15.0, "head": 10.0,
+            "power": 8.5, "efficiency": -1.2
+          },
+          "baseline_values": {
+            "flow": 500.0, "head": 150.0,
+            "power": 75.0, "efficiency": 85.5
+          },
+          "current_values": {
+            "flow": 575.0, "head": 165.0,
+            "power": 81.4, "efficiency": 84.3
+          }
+        },
+        "metadata": {
+          "modelVersion": "1.0.0",
+          "confidence": 0.87,
+          "prediction_rul_days": 12.5,
+          "prediction_probability": 0.85
+        }
+      }
+    end note
+
+    inference -> client: submit_anomaly(json_payload)
+
+    group Retry Logic (3 attempts)
+      loop attempt = 1 to 3
+        client -> api: POST /edge/anomalies\nAuthorization: Bearer TOKEN\nContent-Type: application/json\n\n{JSON payload}
+
+        alt API Success (200 OK)
+          api --> client: {id: 12345, ...payload, createdAt: "..."}
+          client --> inference: success
+          inference -> inference: update_debounce_tracker()
+          note right: Won't report same\nparameter for 60 min
+          leave
+        else API Error
+          api --> client: error
+          alt attempt < 3
+            client -> client: wait (exponential backoff)
+          else all retries failed
+            client --> inference: error
+            inference -> inference: save_unsent_anomaly(payload)
+            note right: Save locally\nfor retry later
+          end
+        end
+      end
+    end
+  end
+end
+
+group Save Results Locally
+  inference -> inference: compile_results()
+  note right
+    {
+      "timestamp": "2024-11-19T14:32:00",
+      "status": "Warning",
+      "deviations": {...},
+      "violations": {...},
+      "prediction": {...},
+      "reported_to_api": true
+    }
+  end note
+  inference -> results: write JSON file
+  results --> inference: saved
+end
+
+inference --> cron: ✓ Inference complete\nStatus: Warning\nReported to API: Yes
+
+@enduml
